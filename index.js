@@ -1,6 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Post from "./Post.js";
+import router from "./router.js";
+import fileUpload from 'express-fileupload'
 
 const PORT = 3000;
 const DB_URL = `mongodb+srv://rumeone:12345@cluster0.vqihm05.mongodb.net/?retryWrites=true&w=majority`
@@ -8,17 +10,9 @@ const DB_URL = `mongodb+srv://rumeone:12345@cluster0.vqihm05.mongodb.net/?retryW
 const app = express();
 
 app.use(express.json());
-
-app.post('/', async (req, res) => {
-   try {
-      const {author, title, content, picture} = req.body;
-      const post = await Post.create({author, title, content, picture});
-      res.json(post);
-   }
-   catch (e) {
-      res.status(500).json(e.message);
-   }
-});
+app.use(express.static('static'));
+app.use(fileUpload({}));
+app.use('/api', router);
 
 async function startApp() {
    try {
